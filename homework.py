@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 
 def send_message(bot, message):
-    """Высылает в чат измененный статус работы или сообщает об ошибке."""
+    """Отправка сообщения в чат."""
     try:
         bot.send_message(
             chat_id=TELEGRAM_CHAT_ID,
@@ -50,7 +50,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
-    """Делает запрос к единственному эндпоинту API-сервиса."""
+    """Запрос к серверу."""
     timestamp = current_timestamp or int(time.time())
     params = {"from_date": timestamp}
     headers = {"Authorization": f"OAuth {PRACTICUM_TOKEN}"}
@@ -72,7 +72,7 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response) -> List:
-    """Проверяет наличие homeworks и current_date в ответе API."""
+    """Валидация ответов API."""
     try:
         homeworks = response["homeworks"]
     except KeyError:
@@ -108,7 +108,7 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверяет доступность переменных окружения."""
+    """Проверка сетевого окружения."""
     return all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID])
 
 
