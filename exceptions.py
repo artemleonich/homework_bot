@@ -1,4 +1,5 @@
 """Мои исключения."""
+from __future__ import annotations
 
 
 class MessageError(Exception):
@@ -9,5 +10,11 @@ class MessageError(Exception):
 
 class VariablesError(Exception):
     """Ошибка переменных окружения."""
+
+    pass
+
+
+class StatusCodeError(Exception):
+    """Исключение при неверном статусе дз."""
 
     pass
