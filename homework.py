@@ -32,7 +32,7 @@ HOMEWORK_STATUSES = {
     "reviewing": "Работа взята на проверку ревьюером.",
     "rejected": "Работа проверена: у ревьюера есть замечания.",
 }
-
+STATUS_ERROR = "Статус {status} не установлен."
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -89,11 +89,16 @@ def check_response(response) -> List:
 
 def parse_status(homework):
     """Метод проверки статуса домашней работы."""
-    name = homework["homework_name"]
-    status = homework["status"]
-    if status not in HOMEWORK_STATUSES:
-        raise ValueError(f"Неизвестный статус домашней работы {status}")
-    return f'Изменился статус работы "{name}". {HOMEWORK_STATUSES[status]}'
+    keys = ["homework_name", "status"]
+    homework_status = homework["status"]
+    homework_name = homework["homework_name"]
+    for key in keys:
+        if key not in homework:
+            raise KeyError(f"Ожидаемый ключ {key} отсутствует в ответе API")
+    if homework_status not in HOMEWORK_STATUSES:
+        raise ValueError(STATUS_ERROR.format(status=homework_status))
+    verdict = HOMEWORK_STATUSES[homework_status]
+    return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
 def check_tokens():
