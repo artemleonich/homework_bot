@@ -88,23 +88,11 @@ def check_response(response) -> List:
 
 def parse_status(homework):
     """Метод проверки статуса домашней работы."""
-    homework_name = homework.get("homework_name")
-    homework_status = homework.get("status")
-    if len(homework) == 0:
-        logger.error("Домашняя работа отсутствует")
-        raise KeyError("Домашняя работа отсутствует")
-    if homework_name is None:
-        logger.error("Отсутствует название")
-        raise KeyError("Отсутствует название")
-    if homework_status is None:
-        logger.error("Отсутствует статус")
-        raise KeyError("Отсутствует статус")
-    verdict = HOMEWORK_STATUSES[homework_status]
-    if homework_status not in verdict:
-        raise ValueError(
-            f"Неизвестный статус домашней работы {homework_status}"
-        )
-    return f'Изменился статус проверки работы "{homework_name}". {verdict}'
+    name = homework["homework_name"]
+    status = homework["status"]
+    if status not in HOMEWORK_STATUSES:
+        raise ValueError(f"Неизвестный статус домашней работы {status}")
+    return f'Изменился статус проверки работы "{name}". {HOMEWORK_STATUSES[status]}'
 
 
 def check_tokens():
@@ -122,7 +110,6 @@ def main():
         raise VariablesError("Проверьте значение токенов")
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
-    logger = logging.getLogger(__name__)
     while True:
         try:
             response = get_api_answer(current_timestamp)
