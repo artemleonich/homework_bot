@@ -3,6 +3,7 @@ import os
 import time
 from http import HTTPStatus
 from json import JSONDecodeError
+from typing import List
 
 import requests
 from dotenv import load_dotenv
@@ -54,7 +55,7 @@ def get_api_answer(current_timestamp):
     params = {"from_date": timestamp}
     try:
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
-    except RequestException:
+    except RequestException as error:
         logger.error("В данный момент ресурс недоступен")
         raise RequestException("В данный момент ресурс недоступен")
     if response.status_code == HTTPStatus.OK:
@@ -64,10 +65,15 @@ def get_api_answer(current_timestamp):
             logger.error("Ответ API не преобразуется в json")
     else:
         logger.error("Ошибка запроса")
-        raise ConnectionError()
+        raise ConnectionError(
+            f"Ошибка доступа {error}. "
+            f"Проверить API: {ENDPOINT}, "
+            f"токен авторизации: {HEADERS}, "
+            f"запрос с момента времени: {params}"
+        )
 
 
-def check_response(response):
+def check_response(response) -> List:
     """Метод проверки ответа API на корректность."""
     try:
         homeworks = response["homeworks"]
@@ -82,21 +88,22 @@ def check_response(response):
 
 def parse_status(homework):
     """Метод проверки статуса домашней работы."""
+    homework_name = homework.get("homework_name")
+    homework_status = homework.get("status")
     if len(homework) == 0:
         logger.error("Домашняя работа отсутствует")
         raise KeyError("Домашняя работа отсутствует")
-    if homework.get("homework_name") is None:
+    if homework_name is None:
         logger.error("Отсутствует название")
         raise KeyError("Отсутствует название")
-    homework_name = homework.get("homework_name")
-    if homework.get("status") is None:
+    if homework_status is None:
         logger.error("Отсутствует статус")
         raise KeyError("Отсутствует статус")
-    homework_status = homework.get("status")
     verdict = HOMEWORK_STATUSES[homework_status]
-    if verdict is None:
-        logging.error("Неопределенный статус")
-        raise KeyError("Неопределенный статус")
+    if homework_status not in verdict:
+        raise ValueError(
+            f"Неизвестный статус домашней работы {homework_status}"
+        )
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
@@ -112,24 +119,23 @@ def main():
     """Основная логика работы бота."""
     if not check_tokens():
         logging.critical("Ошибка в переменных окружения")
-        raise VariablesError()
+        raise VariablesError("Проверьте значение токенов")
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
+    logger = logging.getLogger(__name__)
     while True:
         try:
             response = get_api_answer(current_timestamp)
-            homework = check_response(response)[0]
-            if homework:
-                message = parse_status(homework)
-                send_message(bot, message)
+            homeworks = check_response(response)
+            if not homeworks:
+                logger.info("Статус не изменился")
             else:
-                logging.debug("Статус не изменился")
-            current_timestamp = response.get("current_date")
+                send_message(bot, parse_status(homeworks[0]))
+            current_timestamp = response.get("current_date", current_timestamp)
             time.sleep(RETRY_TIME)
         except Exception as error:
-            message = f"Сбой в работе программы: {error}"
-            send_message(bot, message)
-        finally:
+            logger.error(f"Сбой в работе программы: {error}")
+            send_message(bot, message=f"Сбой в работе программы: {error}")
             time.sleep(RETRY_TIME)
 
 
