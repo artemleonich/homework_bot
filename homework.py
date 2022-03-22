@@ -4,15 +4,15 @@ import logging
 import os
 import time
 from typing import List
+from http import HTTPStatus
+from json import JSONDecodeError
 
 import requests
 import telegram
 from dotenv import load_dotenv
 from requests import RequestException
 
-from exceptions import MessageError
-from exceptions import StatusCodeError
-from exceptions import VariablesError
+from exceptions import MessageError, StatusCodeError, VariablesError
 
 load_dotenv()
 
@@ -64,17 +64,20 @@ def get_api_answer(current_timestamp):
             f"токен авторизации: {HEADERS}, "
             f"апрос с момента времени: {params}",
         )
-    if response.status_code != 200:
+    if response.status_code != HTTPStatus.OK:
         raise StatusCodeError(
             f"Ошибка ответа сервера. Проверить API: {ENDPOINT}, "
             f"токен авторизации: {HEADERS}, "
             f"запрос с момента времени: {params},"
             f"код возврата {response.status_code}",
         )
-    return response.json()
+    try:
+        return response.json()
+    except JSONDecodeError:
+        logger.error("Ответ API не преобразуется в json")
 
 
-def check_response(response) -> List:
+def check_response(response: dict) -> List:
     """Метод проверки ответа API на корректность."""
     try:
         homeworks = response["homeworks"]
@@ -90,13 +93,13 @@ def check_response(response) -> List:
 def parse_status(homework):
     """Метод проверки статуса домашней работы."""
     keys = ["homework_name", "status"]
-    homework_status = homework["status"]
-    homework_name = homework["homework_name"]
     for key in keys:
         if key not in homework:
             raise KeyError(f"Ожидаемый ключ {key} отсутствует в ответе API")
+    homework_status = homework["status"]
     if homework_status not in HOMEWORK_STATUSES:
         raise ValueError(STATUS_ERROR.format(status=homework_status))
+    homework_name = homework["homework_name"]
     verdict = HOMEWORK_STATUSES[homework_status]
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
