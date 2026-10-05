@@ -1,12 +1,10 @@
-<p align="center">
-  <img src=".github/assets/banner.svg" width="100%" alt="Homework Bot" />
-</p>
-
 # Homework Bot
+
+<img src=".github/assets/stack.svg" height="28" alt="Python · Telegram · Learning" />
 
 Статусы ревью домашних заданий Яндекс Практикума в Telegram.
 
-**Учебный проект** · Python · Telegram Bot API · pytest  
+**Учебный проект**  
 [Русский](#about) · [English](#english) · [Профиль](https://github.com/artemleonich)
 
 <a id="about"></a>
