@@ -1,215 +1,88 @@
-# 🤖 Homework Bot
+<p align="center">
+  <img src=".github/assets/banner.svg" width="100%" alt="Homework Bot" />
+</p>
 
-**Telegram bot for tracking Yandex.Practicum homework review status**
+# Homework Bot
 
-[![Python](https://img.shields.io/badge/Python-3.7%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?style=flat-square&logo=telegram&logoColor=white)](https://core.telegram.org/bots)
+Статусы ревью домашних заданий Яндекс Практикума в Telegram.
 
-<div align="center">
+**Учебный проект** · Python · Telegram Bot API · pytest  
+[Русский](#about) · [English](#english) · [Профиль](https://github.com/artemleonich)
 
-🇬🇧 **English** | [🇷🇺 Русский](#-homework-bot-1)
+<a id="about"></a>
 
-</div>
+## О проекте
 
----
+Бот опрашивает API [Яндекс Практикума](https://practicum.yandex.ru/) с интервалом 10 минут и отправляет в Telegram статус первой работы из полученного списка: принято, на проверке или есть замечания. Проект выполнен в рамках курса бэкенд-разработки на Python.
 
-## 📋 Overview
+- Проверяет наличие токенов и идентификатора чата при запуске.
+- Разбирает ответы API и проверяет известные статусы.
+- Ведёт журнал работы и отправляет сообщения об ошибках.
+- Содержит тесты и `Procfile` с командой запуска фонового процесса.
 
-A Telegram bot that periodically polls the Yandex.Practicum API to check the review status of homework assignments. When the status changes (approved, rejected, or under review), the bot instantly sends a notification to your Telegram chat.
+## Стек
 
-Built as a project during the Yandex.Practicum Backend Python course.
+Python · python-telegram-bot 13.7 · requests 2.26.0 · python-dotenv 0.19.0 · pytest 6.2.5. Версии закреплены в [requirements.txt](requirements.txt).
 
----
-
-## ✨ Features
-
-- **Automatic polling** of the Yandex.Practicum homework API every 10 minutes
-- **Instant Telegram notifications** when homework review status changes
-- **Three status types** tracked: approved, under review, and rejected
-- **Environment variable validation** at startup to prevent misconfiguration
-- **Comprehensive error handling** with custom exceptions and structured logging
-- **Heroku-ready** deployment with Procfile included
-
----
-
-## 📂 Project Structure
-
-```
-homework_bot/
-├── homework.py          # Main bot logic
-├── exceptions.py        # Custom exception classes
-├── tests/               # Automated tests
-├── requirements.txt     # Python dependencies
-├── Procfile             # Heroku deployment config
-├── setup.cfg            # Linter configuration
-├── pytest.ini           # Pytest settings
-└── .pre-commit-config.yaml
-```
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Python 3.7+
-- Telegram Bot Token (from [@BotFather](https://t.me/BotFather))
-- Yandex.Practicum API Token
-- Your Telegram Chat ID
-
-### Installation
+## Запуск
 
 ```bash
 git clone https://github.com/artemleonich/homework_bot.git
 cd homework_bot
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-# venv\Scripts\activate   # Windows
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-### Configuration
+В Windows PowerShell: `.venv\Scripts\Activate.ps1`.
 
-Create a `.env` file in the project root:
+Создайте `.env` в корне проекта:
 
-```env
+```dotenv
 PRACTICUM_TOKEN=your_practicum_token
 TELEGRAM_TOKEN=your_telegram_bot_token
 TELEGRAM_CHAT_ID=your_chat_id
 ```
 
-### Running
+Токен Telegram-бота можно получить у [@BotFather](https://t.me/BotFather); API-токен Практикума и идентификатор чата нужно указать для своей учётной записи.
 
 ```bash
 python homework.py
 ```
 
----
+Остановить процесс можно сочетанием Ctrl+C. Для работы нужны действующие токены и доступ к обоим API.
 
-## ⚙️ How It Works
+## Проверка
 
-1. The bot validates that all required environment variables are set
-2. Every 10 minutes, it sends a request to the Practicum API
-3. The API response is validated for correctness
-4. If the homework status has changed, a message is sent to Telegram
-5. All errors are logged and forwarded to the Telegram chat
-
----
-
-## 🛠️ Tech Stack
-
-- **python-telegram-bot** — Telegram Bot API wrapper
-- **requests** — HTTP client for API calls
-- **python-dotenv** — environment variable management
-- **flake8** — code style linting
-- **pytest** — testing framework
-
----
-
----
-
-# 🤖 Homework Bot
-
-**Telegram-бот для отслеживания статуса проверки домашних работ на Яндекс.Практикуме**
-
-[![Python](https://img.shields.io/badge/Python-3.7%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?style=flat-square&logo=telegram&logoColor=white)](https://core.telegram.org/bots)
-
-<div align="center">
-
-[🇬🇧 English](#-homework-bot) | 🇷🇺 **Русский**
-
-</div>
-
----
-
-## 📋 Обзор
-
-Telegram-бот, который периодически опрашивает API Яндекс.Практикума для проверки статуса ревью домашних заданий. Когда статус меняется (принято, отклонено или на проверке), бот мгновенно отправляет уведомление в ваш Telegram-чат.
-
-Проект выполнен в рамках курса «Бэкенд-разработка на Python» в Яндекс.Практикуме.
-
----
-
-## ✨ Возможности
-
-- **Автоматический опрос** API Яндекс.Практикума каждые 10 минут
-- **Мгновенные уведомления в Telegram** при изменении статуса работы
-- **Три типа статусов**: принято, на проверке, отклонено
-- **Проверка переменных окружения** при запуске для предотвращения ошибок конфигурации
-- **Комплексная обработка ошибок** с кастомными исключениями и структурированным логированием
-- **Готовность к деплою на Heroku** — Procfile в комплекте
-
----
-
-## 📂 Структура проекта
-
-```
-homework_bot/
-├── homework.py          # Основная логика бота
-├── exceptions.py        # Кастомные классы исключений
-├── tests/               # Автотесты
-├── requirements.txt     # Зависимости
-├── Procfile             # Конфигурация деплоя на Heroku
-├── setup.cfg            # Настройки линтера
-├── pytest.ini           # Настройки pytest
-└── .pre-commit-config.yaml
-```
-
----
-
-## 🚀 Быстрый старт
-
-### Требования
-
-- Python 3.7+
-- Токен Telegram-бота (от [@BotFather](https://t.me/BotFather))
-- API-токен Яндекс.Практикума
-- Ваш Telegram Chat ID
-
-### Установка
+Из корня репозитория:
 
 ```bash
-git clone https://github.com/artemleonich/homework_bot.git
-cd homework_bot
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-# venv\Scripts\activate   # Windows
-pip install -r requirements.txt
+python -m pytest
 ```
 
-### Настройка
+## Навигация по коду
 
-Создайте файл `.env` в корне проекта:
+| Файл | Назначение |
+| --- | --- |
+| [homework.py](homework.py) | Опрос API, обработка ответа, уведомления |
+| [exceptions.py](exceptions.py) | Исключения приложения |
+| [tests/](tests/) | Проверки поведения бота |
+| [Procfile](Procfile) | Команда `worker: python homework.py` |
 
-```env
-PRACTICUM_TOKEN=ваш_токен_практикума
-TELEGRAM_TOKEN=токен_вашего_бота
-TELEGRAM_CHAT_ID=ваш_chat_id
-```
+Здесь сохранён учебный стек. Интервал опроса составляет 10 минут, поэтому уведомления зависят от следующего запроса к API.
 
-### Запуск
+<a id="english"></a>
 
-```bash
-python homework.py
-```
+<details>
+<summary>English overview</summary>
+
+A learning project from the Yandex Practicum backend Python course. The bot polls the homework API every ten minutes and sends the status of the first returned homework to Telegram. It validates configuration, checks API responses and logs errors.
+
+Install `requirements.txt`, create the root `.env` file with `PRACTICUM_TOKEN`, `TELEGRAM_TOKEN` and `TELEGRAM_CHAT_ID`, then run `python homework.py`. Obtain the Telegram token from [@BotFather](https://t.me/BotFather). Run `python -m pytest` from the repository root for tests. The code uses the original pinned dependencies and requires working API credentials.
+
+</details>
 
 ---
 
-## ⚙️ Принцип работы
+Автор: [Артём Леонов](https://github.com/artemleonich).
 
-1. При запуске бот проверяет наличие всех необходимых переменных окружения
-2. Каждые 10 минут отправляет запрос к API Практикума
-3. Ответ API проверяется на корректность
-4. Если статус домашней работы изменился — в Telegram отправляется сообщение
-5. Все ошибки логируются и пересылаются в Telegram-чат
-
----
-
-## 🛠️ Технологии
-
-- **python-telegram-bot** — обёртка над Telegram Bot API
-- **requests** — HTTP-клиент для работы с API
-- **python-dotenv** — управление переменными окружения
-- **flake8** — линтинг кода
-- **pytest** — фреймворк для тестирования
