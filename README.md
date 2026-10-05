@@ -1,6 +1,6 @@
 # Homework Bot
 
-<img src=".github/assets/stack.svg" height="28" alt="Python · Telegram · Learning" />
+<a href=".github/assets/light/stack.svg#gh-light-mode-only"><img src=".github/assets/light/stack.svg" height="28" alt="Python · Telegram · Learning" /></a><a href=".github/assets/stack.svg#gh-dark-mode-only"><img src=".github/assets/stack.svg" height="28" alt="Python · Telegram · Learning" /></a>
 
 Статусы ревью домашних заданий Яндекс Практикума в Telegram.
 
